@@ -24,12 +24,12 @@ class Servidor():
             self.__tcp.listen(1)
             print("Servidor iniciado em ", self._host, ": ", self._port)
             while True:
-                con, client = self.__tcp.accept()
+                con, client = self.__tcp.accept() # Comando bloqueante. O código bloqueia aqui e aguarda conexão de um client
                 self._service(con, client)
         except Exception as e:
             print("Erro ao inicializar o servidor", e.args)
 
-    def _service(self, con, client):
+    def _service(self, con: socket.socket, client):
         """
         Método que implementa o serviço de calculadora
         :param con: objeto socket utilizado para enviar e receber dados
@@ -38,7 +38,7 @@ class Servidor():
         print("Atendendo cliente ", client)
         while True:
             try:
-                msg = con.recv(1024)
+                msg = con.recv(1024) # Recebe 1024 bytes (1 kB)
                 msg_s = str(msg.decode('ascii'))
                 resp = eval(msg_s)
                 con.send(bytes(str(resp), 'ascii'))
