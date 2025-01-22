@@ -61,7 +61,7 @@ class ServidorMT(Servidor):
         Construtor da classe ServidorMT
         """
         super().__init__(host,port)
-        self.__threadPool = {}
+        self.__threadPool:dict[str, threading.Thread] = {}
     
     def start(self):
         """
@@ -76,7 +76,7 @@ class ServidorMT(Servidor):
             while True:
                 con, client = self.__tcp.accept()
                 self.__threadPool[client] = threading.Thread(target=self._service,args=(con,client))
-                self.__threadPool[client].start()
+                self.__threadPool[client].start() # Método start da instância de Thread
 
         except Exception as e:
             print("Erro ao inicializar o servidor",e.args)
