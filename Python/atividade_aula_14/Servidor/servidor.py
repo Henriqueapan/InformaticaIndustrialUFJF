@@ -3,7 +3,8 @@ import cv2
 import numpy as np
 import os
 
-__MAX_BUFSIZE = 2**14
+
+_MAX_BUFSIZE = 2**14
 
 class Servidor():
     """
@@ -40,7 +41,6 @@ class Servidor():
         :param con: objeto socket utilizado para enviar e receber dados
         :param client: é o endereço do cliente
         """
-        # TODO: Alterar para processar imagem
         print("Atendendo cliente ", client)
         while True:
             try:
@@ -51,12 +51,12 @@ class Servidor():
                 bytes_read = 0
                 bytes_img = b''
                 while bytes_read < tam_img:
-                    if (bytes_read + __MAX_BUFSIZE) > tam_img:
+                    if (bytes_read + _MAX_BUFSIZE) > tam_img:
                         bytes_img += con.recv(tam_img - bytes_read)
                         bytes_read = tam_img
                     else:
-                        bytes_img += con.recv(__MAX_BUFSIZE)
-                        bytes_read += __MAX_BUFSIZE
+                        bytes_img += con.recv(_MAX_BUFSIZE)
+                        bytes_read += _MAX_BUFSIZE
 
                 # Decodificando imagen
                 img = cv2.imdecode(np.frombuffer(bytes_img, np.uint8), cv2.IMREAD_COLOR)
@@ -81,16 +81,15 @@ class Servidor():
                 bytes_drawn_img = bytes(drawn_img_ndarray)
                 bytes_tam_drawn_img = len(bytes_drawn_img).to_bytes(4, 'big')
 
-                # Enviando imagem de volta tamanho e em seguida imagem
-                self.__tcp.send(bytes_tam_drawn_img)
-                self.__tcp.send(bytes_drawn_img)
+                # Enviando de volta tamanho e em seguida imagem
+                con.send(bytes_tam_drawn_img)
+                con.send(bytes_drawn_img)
 
                 print(client, " -> requisição atendida")
             except OSError as e:
                 print("Erro de conexão ", client, ": ", e.args)
                 return
             except Exception as e:
-                print("Erro nos dados recebidos pelo cliente ",
-                      client, ": ", e.args)
+                print("Erro nos dados recebidos pelo cliente ", client, ": ", e.args)
                 con.send(bytes("Erro", 'ascii'))
                 return
