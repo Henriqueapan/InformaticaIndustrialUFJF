@@ -12,8 +12,8 @@ class ServidorMODBUS():
         """
         Construtor
         """
-        self._db = DataBank()
-        self._server = ModbusServer(host=host_ip,port=port,no_block=True,data_bank=self._db)
+        self._db:DataBank = DataBank()
+        self._server:ModbusServer = ModbusServer(host=host_ip,port=port,no_block=True,data_bank=self._db)
        
         
     def run(self):

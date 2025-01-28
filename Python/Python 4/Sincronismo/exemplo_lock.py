@@ -23,10 +23,12 @@ class ContaBancaria:
 
         
     def disparar_ordens(self, ordens):
-        thread_pool = []
+        thread_pool:list[threading.Thread] = []
         for ordem in ordens:
             thread_pool.append(threading.Thread(
-                target=conta.transferir, args=(ordem,)))
+                target=conta.transferir, args=(ordem,)
+                )
+            )
             thread_pool[-1].start()
         for th in thread_pool:
             th.join()

@@ -20,10 +20,10 @@ class ClienteMODBUS():
         try:
             atendimento = True
             while atendimento:
-                sel = input("Deseja realizar uma leitura, escrita ou configuração? (1- Leitura | 2- Escrita | 3- Configuração |4- Sair): ")
+                sel = input("Deseja realizar uma leitura, escrita ou configuração? (1- Leitura | 2- Escrita | 3- Configuração | 4- Sair): ")
                 
                 if sel == '1':
-                    tipo = input ("""Qual tipo de dado deseja ler? (1- Holding Register) |2- Coil |3- Input Register |4- Discrete Input) :""")
+                    tipo = input ("""Qual tipo de dado deseja ler? (1- Holding Register) | 2- Coil | 3- Input Register | 4- Discrete Input) :""")
                     addr = input (f"Digite o endereço da tabela MODBUS: ")
                     nvezes = input ("Digite o número de vezes que deseja ler: ")
                     for i in range(0,int(nvezes)):
