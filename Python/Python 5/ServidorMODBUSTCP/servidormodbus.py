@@ -1,6 +1,4 @@
 from pyModbusTCP.server import DataBank, ModbusServer
-from pymodbus.payload import BinaryPayloadDecoder
-from pymodbus.constants import Endian
 import random
 from time import sleep
 
@@ -17,11 +15,6 @@ class ServidorMODBUS():
         self._db:DataBank = DataBank()
         self._server:ModbusServer = ModbusServer(host=host_ip,port=port,no_block=True,data_bank=self._db)
        
-    def __readFloat32FromHoldingRegisters(self, start_addr:int):
-        read_result = self._db.get_holding_registers(start_addr, 2)
-
-        decoder = BinaryPayloadDecoder(read_result, Endian.BIG)
-        return decoder.decode_32bit_float()
         
     def run(self):
         """

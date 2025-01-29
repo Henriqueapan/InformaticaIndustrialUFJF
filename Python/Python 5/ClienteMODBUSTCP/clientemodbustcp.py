@@ -1,12 +1,8 @@
 from pyModbusTCP.client import ModbusClient
-from pymodbus.client import ModbusTcpClient
 from pymodbus.payload import BinaryPayloadBuilder
-from pymodbus.payload import BinaryPayloadDecoder
-from pymodbus.client.mixin import ModbusClientMixin
-from pymodbus.constants import Endian
 from time import sleep
 
-class ClienteMODBUS():
+class ClienteMODBUSTCP():
     """
     Classe Cliente MODBUS
     """
@@ -14,14 +10,14 @@ class ClienteMODBUS():
         """
         Construtor
         """
-        self._cliente = ModbusTcpClient(host=server_ip,port = porta)
+        self._cliente = ModbusClient(host=server_ip,port = porta)
         self._scan_time = scan_time
 
     def atendimento(self):
         """
         Método para atendimento do usuário
         """
-        self._cliente.connect()
+        self._cliente.open()
         try:
             atendimento = True
             while atendimento:
@@ -94,16 +90,8 @@ class ClienteMODBUS():
         if tipo_valor is str: raise TypeError("Valor escrito não pode ser uma string")
 
         if tipo_addr == 1:
-            if tipo_valor is int:
-                return self._cliente.write_register(addr,tipo_valor(valor))
-            elif tipo_valor is float:
-                binaryBuilder = BinaryPayloadBuilder(byteorder=Endian.BIG)
-                binaryBuilder.add_32bit_float(float(valor))
-                payload = binaryBuilder.to_registers()
-                
-                decodedFloat32 = ModbusClientMixin.convert_from_registers(payload, data_type=ModbusClientMixin.DATATYPE.FLOAT32, word_order='big')
-                print(f"Valor float escrito:\r\n {decodedFloat32}")
+            return self._cliente.write_single_register(addr,tipo_valor(valor)) if tipo_valor is int else None
 
-                return self._cliente.write_registers(addr, payload)
+
         if tipo_addr == 2:
-            return self._cliente.write_coil(addr,valor) if tipo_valor is int else None
+            return self._cliente.write_single_coil(addr,valor) if tipo_valor is int else None
