@@ -1,11 +1,29 @@
 #:kivy 1.11.1
-<MyWidget>:
+
+# Podem ser definidos quantos widgets desejar-se nesse arquivo
+<MyWidget2>: # Widget root (nível hierárquico mais alto) deste layout
+    orientation: 'vertical'
+    Button:
+        text: 'Incremental alt'
+        on_press: app.root.changelb() # Exemplo de utilização da keyword app para acessar o root global (classe MyWidget, sem o 2 no final)
+    Label:
+        id: lb1
+        text: '2'
+
+
+# Este é o root do app, pois ele é retornado pelo método build da classe (que estende App) cujo método run é chamado
+<MyWidget>: # Widget root (nível hierárquico mais alto) deste layout
+    # kivy busca em arquivos .kv por declarações das classes usadas no layout no código python
+    # Isso só funciona se o arquivo tiver no mesmo diretório do módulo e o nome da classe de app
+    # (classe que estende App), sem a string App
     orientation: 'horizontal'
     Button:
         id: btn
         text: 'Incrementar'
         background_color: [1,0,0,1]
-        on_press: root.changelb()
+        on_press: root.changelb() # root faz referência ao objeto raíz deste layout (MyWidget aqui)
+        # on_press: self.text = '' # self faz referência ao próprio objeto no qual foi referenciado (Button aqui)
+        # on_press: app.root... = '' # app faz referência ao próprio app (BasicApp aqui)
     Label:
         id: lb
         text: '0'
@@ -14,7 +32,7 @@
         Button:
             id: bt_limpar
             text: 'Limpar'
-            on_press:  lb.text = '0'
+            on_press:  lb.text = '0' # Também é possível referenciar outros widgets através de seus ids (lb aqui para o objeto Label acima)
         Label:
             id:lb_2
             text: 'Label2'

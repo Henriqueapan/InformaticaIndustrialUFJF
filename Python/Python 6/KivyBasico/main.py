@@ -4,6 +4,8 @@ from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 
+kivy.require('2.1.0')
+
 class BasicApp(App):
     """
     Aplicativo básico Kivy
