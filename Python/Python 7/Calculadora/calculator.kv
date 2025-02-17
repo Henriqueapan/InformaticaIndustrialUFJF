@@ -1,0 +1,109 @@
+#:kivy 1.11.1
+
+# Podem ser definidos quantos widgets desejar-se nesse arquivo
+<MyWidget2>: # Widget root (nível hierárquico mais alto) deste layout
+    orientation: 'vertical'
+    Button:
+        text: 'Incremental alt'
+        on_press: app.root.changelb() # Exemplo de utilização da keyword app para acessar o root global (classe MyWidget, sem o 2 no final)
+    Label:
+        id: lb1
+        text: '2'
+
+
+# Este é o root do app, pois ele é retornado pelo método build da classe (que estende App) cujo método run é chamado
+<CalculatorWidget>:
+    orientation: 'vertical'
+    Label:
+    # TODO: Limitar comprimento do texto
+        id: display
+        text: ''
+        text_size: root.width, None
+        font_size: '25dp'
+        size: self.texture_size
+        padding: 12
+        halign: 'right'
+        valign: 'middle'
+        size_hint_y: 1/5
+        max_lines: 1
+        shorten: True
+        shorten_from: 'left'
+    GridLayout:
+        cols: 4
+        size_hint_y: 3/5
+        Button:
+            text: '7'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '8'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '9'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '+'
+            rows: 1
+            on_release: root.insert_operator(self.text)
+        Button:
+            text: '4'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '5'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '6'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '-'
+            rows: 1
+            on_release: root.insert_operator(self.text)
+        Button:
+            text: '1'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '2'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '3'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: '*'
+            rows: 1
+            on_release: root.insert_operator(self.text)
+        Button:
+            text: 'C'
+            rows: 1
+            on_release: root.clear()
+            background_color: [0.8941176470588236, 0.4823529411764706, 0.9568627450980393, 1]
+        Button:
+            text: '0'
+            rows: 1
+            on_release: root.insert(int(self.text))
+        Button:
+            text: 'DEL'
+            rows: 1
+            on_release: root.delete()
+        Button:
+            text: '/'
+            rows: 1
+            on_release: root.insert_operator(self.text)
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: 1/5
+        Button:
+            text: '='
+            size_hint_x: 3/4
+            on_release: root.compute()
+        Button:
+            text: '.'
+            size_hint_x: 1/4
+            on_release: root.insert(self.text)
