@@ -1,0 +1,59 @@
+#:kivy 1.11.1
+
+<ModbusMenuWidget>
+    orientation: 'vertical'
+    rows: 2
+    padding: 20
+    size_hint_max_x: '700px'
+    pos_hint: { 'center_x': 0.5 }
+    Label:
+        id: result_label
+        text: 'Retorno modbus'
+        font_size: 50
+        # canvas.before:
+        #     Color:
+        #         rgba: 1, 0, 1, 1
+        #     Rectangle:
+        #         pos: self.pos
+        #         size: self.size
+    GridLayout:
+        id: input_grid
+        cols: 2
+        spacing: 50
+        # canvas.before:
+        #     Color:
+        #         rgba: 1, 1, 1, 1
+        #     Rectangle:
+        #         pos: self.pos
+        #         size: self.size
+        BoxLayout:
+            orientation: 'vertical'
+            pos_hint: { 'center_y': 0 }
+            Label:
+                id: ip_label
+                text: 'IP'
+                size: self.texture_size
+                size_hint: None, None
+            TextInput:
+                id: ip_input
+                size_hint_y: None
+                size_hint_max_y: '30px'
+                height: 30
+                write_tab: False
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                id: port_label
+                text: 'Port'
+                size: self.texture_size
+                size_hint: None, None
+            IntInput:
+                id: port_input
+                size_hint_max_x: '100px'
+                size_hint_max_y: '30px'
+                write_tab: False
+    Button:
+        id: conn_btn
+        text: 'Connect'
+        size_hint_y: 0.1
+        on_release: root.toggle_connect()
