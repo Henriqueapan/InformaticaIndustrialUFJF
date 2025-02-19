@@ -22,7 +22,7 @@ class ModbusPersistencia(object):
 
     def guardar_dados(self):
         """
-        Método para leitura de um dado da tabela MODBUS
+        Método para leitura de um dado da tabela MODBUS, inserindo ele no banco
         """
         try:
             print("Persistência iniciada")
@@ -40,7 +40,7 @@ class ModbusPersistencia(object):
 
     def acesso_dados_historicos(self):
         """
-        Método que permite ao usuário acessar dados históricos
+        Método que permite ao usuário acessar dados históricos armazenados no banco de dados
         """
         try:
             print("Bem vindo ao sistema de busca de dados históricos")

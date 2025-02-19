@@ -4,7 +4,7 @@ import random
 
 class ServidorMODBUS():
     """
-    Classe Servidor MODBUS
+    Classe Servidor MODBUS que simula dados de uma planta física variando com o tempo, sendo coletados por um CLP, por exemplo.
     """
     def __init__(self, host_ip,port):
         """
@@ -22,6 +22,7 @@ class ServidorMODBUS():
         while True:
             self._server
             
+            # Variação simulada dos dados do CLP, inseridos nos holding_registers do sv modbus em endereços similares a reais
             self._server.data_bank.set_holding_registers(1000,[random.randrange(400,500)]) # temperatura
             self._server.data_bank.set_holding_registers(1001,[random.randrange(100000,120000)]) #pressão
             self._server.data_bank.set_holding_registers(1002,[random.randrange(20,40)]) # umidade

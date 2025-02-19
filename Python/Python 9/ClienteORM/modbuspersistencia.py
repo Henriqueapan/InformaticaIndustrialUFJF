@@ -20,6 +20,8 @@ class ModbusPersistencia(object):
         self._scan_time = 1
         self._tags_addrs = tags_addrs
         self._session = Session()
+        # TODO: criar logica para droppar as tabelas antes de tentar criá-las para evitar falha no create_all quando modificar os models
+        # Ou então, ao modificar os models, apagar o data.db e deixar criar novamente
         Base.metadata.create_all(engine)
         self._threads = []
         self._lock = Lock()

@@ -9,3 +9,4 @@ kivy_env
 *.db
 *.data
 venv
+venv*
