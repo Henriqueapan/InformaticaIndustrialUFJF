@@ -7,18 +7,18 @@ import random, struct
 from time import sleep
 
 modbusDataTable: dict[dict[str, str|int]] = {
-    "tipo_motor": { "addr": 708, "float": True, "multiplicador": 1, "valor": None, "unidade": ""},
+    "tipo_motor": { "addr": 708, "float": False, "multiplicador": 1, "valor": None, "unidade": ""},
     "temp_r": { "addr": 700, "float": True, "multiplicador": 10, "valor": None, "unidade": "°C"},
     "temp_s": { "addr": 702, "float": True, "multiplicador": 10, "valor": None, "unidade": "°C"},
     "temp_t": { "addr": 704, "float": True, "multiplicador": 10, "valor": None, "unidade": "°C"},
     "temp_carc": { "addr": 706, "float": True, "multiplicador": 10, "valor": None, "unidade": "°C"},
     "carga_est": { "addr": 710, "float": True, "multiplicador": 1, "valor": None, "unidade": "Kgf/cm²"},
     "vel_est": { "addr": 724, "float": True, "multiplicador": 1, "valor": None, "unidade": "m/min"},
-    "curr_r": { "addr": 840, "float": False, "multiplicador": 100, "valor": None, "unidade": "A"},
-    "curr_s": { "addr": 841, "float": False, "multiplicador": 100, "valor": None, "unidade": "A"},
-    "curr_t": { "addr": 842, "float": False, "multiplicador": 100, "valor": None, "unidade": "A"},
-    "curr_N": { "addr": 843, "float": False, "multiplicador": 100, "valor": None, "unidade": "A"},
-    "curr_med": { "addr": 845, "float": False, "multiplicador": 100, "valor": None, "unidade": "A"},
+    "curr_r": { "addr": 840, "float": True, "multiplicador": 100, "valor": None, "unidade": "A"},
+    "curr_s": { "addr": 841, "float": True, "multiplicador": 100, "valor": None, "unidade": "A"},
+    "curr_t": { "addr": 842, "float": True, "multiplicador": 100, "valor": None, "unidade": "A"},
+    "curr_N": { "addr": 843, "float": True, "multiplicador": 100, "valor": None, "unidade": "A"},
+    "curr_med": { "addr": 845, "float": True, "multiplicador": 100, "valor": None, "unidade": "A"},
     "tens_rs": { "addr": 847, "float": False, "multiplicador": 10, "valor": None, "unidade": "V"},
     "tens_st": { "addr": 848, "float": False, "multiplicador": 10, "valor": None, "unidade": "V"},
     "tens_tr": { "addr": 849, "float": False, "multiplicador": 10, "valor": None, "unidade": "V"},
@@ -35,7 +35,7 @@ modbusDataTable: dict[dict[str, str|int]] = {
     "pot_apar_t": { "addr": 862, "float": False, "multiplicador": 1, "valor": None, "unidade": "VA"},
     "pot_apar_total": { "addr": 863, "float": False, "multiplicador": 1, "valor": None, "unidade": "VA"},
     "rot_motor": { "addr": 884, "float": True, "multiplicador": 1, "valor": None, "unidade": "RPM"},
-    "driver_partida": { "addr": 1216, "float": False, "multiplicador": 1, "valor": None, "unidade": ""},
+    # "driver_partida": { "addr": 1216, "float": False, "multiplicador": 1, "valor": None, "unidade": ""},
     "ctrl_partida_inv": { "addr": 1312, "float": False, "multiplicador": 1, "valor": None, "ctrl": True}, # TODO: Definir valor inicial das variáveis de controle
     "freq_partida_inv": { "addr": 1313, "float": False, "multiplicador": 10, "valor": None, "ctrl": True},
     "tempo_rampa_partida_inv": { "addr": 1314, "float": False, "multiplicador": 10, "valor": None, "ctrl": True},
@@ -49,7 +49,7 @@ modbusDataTable: dict[dict[str, str|int]] = {
     "energ_ativ": { "addr": 1210, "float": False, "multiplicador": 1, "valor": None, "ctrl": True},
     "energ_reativ": { "addr": 1212, "float": False, "multiplicador": 1, "valor": None, "ctrl": True},
     "energ_apar": { "addr": 1214, "float": False, "multiplicador": 1, "valor": None, "ctrl": True},
-    "status_mot": { "addr": 1330, "float": False, "multiplicador": 1, "bit": 0, "valor": None, "unidade": ""},
+    # "status_mot": { "addr": 1330, "float": False, "multiplicador": 1, "bit": 0, "valor": None, "unidade": ""},
     "torque_mot": { "addr": 1420, "float": True, "multiplicador": 100, "valor": None, "unidade": "N*m"}
 }
 
@@ -85,9 +85,30 @@ class ServidorMODBUS():
                 print("Tabela MODBUS")
                 print(f'Holding Register \r\n R1000: {self._db.get_holding_registers(1000)} \r\n R2000: {self._db.get_holding_registers(2000)}')
                 print(f'Coil \r\n R1000: {self._db.get_coils(1000)}')
+                print(f'Holding Register Status Mot \r\n R1330: {self._db.get_holding_registers(1330)}')
+                print('======================')
+
+                self._handle_status_mot()
+
                 sleep(1)
         except Exception as e:
             print("Erro: ",e.args)
+
+    def _handle_status_mot(self):
+        tipo_partida_addr_map = {
+            0: 1319,
+            1: 1316,
+            2: 1312
+        }
+
+        tipo_partida_selecionado = self._db.get_holding_registers(1324, 1)[0]
+        self._db.set_holding_registers(1216, [tipo_partida_selecionado])
+        
+        if self._db.get_holding_registers(tipo_partida_addr_map.get(tipo_partida_selecionado), 1)[0] == 1:
+            self._db.set_holding_registers(1330, [1])
+        else:
+            self._db.set_holding_registers(1330, [0])
+
 
     # Função para converter float para dois registradores de 16 bits
     def __float_to_registers(self, value):
@@ -100,9 +121,14 @@ class ServidorMODBUS():
         for info_valor in modbusDataTable.values():
             is_ctrl_var = info_valor.get("ctrl") is not None
             if is_ctrl_var: continue
-            regs =\
-                self.__float_to_registers(float(random.randrange(int(0.95*400),int(1.05*400))/10.24)) if info_valor["float"]\
-                else [random.randrange(int(0.95*400),int(1.05*400))]
+
+            if info_valor["unidade"] == "":
+                regs = [random.choice([1,2])]
+            elif info_valor.get("ctrl"): continue
+            else:
+                regs =\
+                    self.__float_to_registers(float(random.randrange(int(0.95*400),int(1.05*400))/10.24)) if info_valor["float"]\
+                    else [random.randrange(int(0.95*400),int(1.05*400))]
 
             self._db.set_holding_registers(\
                 info_valor["addr"],\
